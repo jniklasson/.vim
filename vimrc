@@ -37,7 +37,7 @@ endif
 """ PLUGINS
 call plug#begin()
     Plug 'dense-analysis/ale'
-    Plug 'preservevim/nerdtree'
+    Plug 'preservim/nerdtree'
     Plug 'vim-airline/vim-airline'
     Plug 'tpope/vim-fugitive'
 call plug#end()
@@ -97,32 +97,3 @@ augroup Binary
     au BufWritePre *.out,*.bin,*.hex endif
     au BufWritePost *.out,*.bin,*.hex if &bin | %!xxd
     au BufWritePost *.out,*.bin,*.hex set nomod | endif 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
