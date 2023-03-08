@@ -36,25 +36,30 @@ if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
 endif
 
 """ PLUGINS
+
 call plug#begin()
     Plug 'dense-analysis/ale'
     Plug 'preservim/nerdtree'
     Plug 'vim-airline/vim-airline'
     Plug 'tpope/vim-fugitive'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call plug#end()
 
 set omnifunc=ale#completion#OmniFunc
-
-
-let g:ale_linters = {'python': ['flake8']}
+"
+let g:ale_linters = {
+            \'python': ['flake8'],
+            \'cpp': ['g++','clangd'],
+            \'c': ['cc'],
+            \}
 let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'python': ['black'],
             \}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
-let g:ale_lint_on_enter = 0
-let g:ale_completion_enabled = 0
+let g:ale_lint_on_enter = 1
+let g:ale_completion_enabled = 1
 
 """ REMAPS
 let mapleader = ","
@@ -84,18 +89,21 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>": "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>": "\<S-Tab>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>": "\<CR>"
 
+nnoremap gd :ALEGoToDefinition<CR>
+nnoremap gh :ALEHover<CR>
+nnoremap gf :ALEFix<CR>
+nnoremap gn :ALENext<CR>
+nnoremap gp :ALEPrevious<CR>
 
 augroup Binary
     au!
     au BufReadPre *.out,*.bin,*.hex let &bin=1
-    au BufReadPost *.out,*.bin,*.hex if &bin | %!xxd 
+    au BufReadPost *.out,*.bin,*.hex if &bin | %!xxd
     au BufReadPost *.out,*.bin,*.hex set ft=xxd | endif
     au BufWritePre *.out,*.bin,*.hex if &bin | %!xxd -r
     au BufWritePre *.out,*.bin,*.hex endif
     au BufWritePost *.out,*.bin,*.hex if &bin | %!xxd
-    au BufWritePost *.out,*.bin,*.hex set nomod | endif 
-
-
+    au BufWritePost *.out,*.bin,*.hex set nomod | endif
 
 " air-line
 
