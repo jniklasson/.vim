@@ -67,8 +67,7 @@ let mapleader = ","
 nnoremap o o<esc>
 nnoremap O O<esc>
 nnoremap Y y$
-noremap E $
-noremap B 0
+noremap ¤ $
 nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
 
@@ -83,7 +82,8 @@ nnoremap <C-l> <C-w>l
 nnoremap <leader>m :make<CR>
 
 nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+
+nnoremap <C-f> :FZF<CR>
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>": "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>": "\<S-Tab>"
