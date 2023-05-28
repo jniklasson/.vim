@@ -28,6 +28,7 @@ set mouse=a
 set hidden
 set updatetime=500
 set signcolumn=yes
+set nohlsearch
 
 """ COLORSCHEMES
 if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
@@ -50,7 +51,7 @@ set omnifunc=ale#completion#OmniFunc
 let g:ale_linters = {
             \'python': ['flake8'],
             \'cpp': ['g++','clangd'],
-            \'c': ['cc'],
+            \'c': ['clangd'],
             \}
 let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -70,9 +71,9 @@ nnoremap Y y$
 noremap ¤ $
 nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
+nnoremap gb :ls<CR>:buffer 
 
 nnoremap <leader>w :w<CR>
-nnoremap gf <C-w>gf
 
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
@@ -91,7 +92,6 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>": "\<CR>"
 
 nnoremap gd :ALEGoToDefinition<CR>
 nnoremap gh :ALEHover<CR>
-nnoremap gf :ALEFix<CR>
 nnoremap gn :ALENext<CR>
 nnoremap gp :ALEPrevious<CR>
 
