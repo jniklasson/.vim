@@ -9,12 +9,13 @@ set number
 set relativenumber
 set cursorline
 set cursorlineopt=number
+set ruler
 set shiftwidth=4
 set tabstop=4
 set expandtab
 set nobackup
 set noswapfile
-set scrolloff=10
+set scrolloff=25
 set nowrap
 set incsearch
 set ignorecase
@@ -29,6 +30,8 @@ set hidden
 set updatetime=500
 set signcolumn=yes
 set nohlsearch
+set ttyfast
+
 
 """ COLORSCHEMES
 if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
@@ -40,7 +43,6 @@ endif
 
 call plug#begin()
     Plug 'dense-analysis/ale'
-    Plug 'preservim/nerdtree'
     Plug 'vim-airline/vim-airline'
     Plug 'tpope/vim-fugitive'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -71,7 +73,10 @@ nnoremap Y y$
 noremap ¤ $
 nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 nnoremap gb :ls<CR>:buffer 
+nnoremap gl :buffer #<CR>
 
 nnoremap <leader>w :w<CR>
 
@@ -81,10 +86,7 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <leader>m :make<CR>
-
-nnoremap <C-t> :NERDTreeToggle<CR>
-
-nnoremap <C-f> :FZF<CR>
+nnoremap <leader>f :FZF<CR>
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>": "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>": "\<S-Tab>"
@@ -94,6 +96,8 @@ nnoremap gd :ALEGoToDefinition<CR>
 nnoremap gh :ALEHover<CR>
 nnoremap gn :ALENext<CR>
 nnoremap gp :ALEPrevious<CR>
+nnoremap gr :ALEFindReferences<CR>
+inoremap <C-Space> <C-\><C-O>:ALEComplete<CR>
 
 augroup Binary
     au!
