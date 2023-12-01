@@ -153,14 +153,16 @@ function! ALEJump(command)
 endfunction
   
 let g:ale_linters = {
-            \'python': ['flake8', 'pylsp'],
-            \'cpp': ['g++','clangd'],
-            \'c': ['clangd'],
+            \   'python': ['flake8', 'pylsp'],
+            \   'cpp': ['g++','clangd'],
+            \   'c': ['clangd'],
+            \   'rust':['analyzer'],
             \}
 
 let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'python': ['black'],
+            \   'rust': ['rustfmt']
             \}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
