@@ -1,6 +1,7 @@
 " GENERAL 
 set nocompatible
 set encoding=utf-8
+set exrc
 filetype on
 filetype plugin on
 filetype indent on
@@ -35,12 +36,6 @@ set autoread
 set backspace=indent,eol,start
 set belloff=all
 
-""" COLORSCHEMES
-if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
-    colorscheme gruvbox
-    set background=dark
-endif
-
 """ PLUGINS
 " Check if VimPlug is installed
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -49,6 +44,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+let g:ale_completion_enabled = 1
 
 call plug#begin()
     Plug 'dense-analysis/ale'
@@ -58,8 +54,14 @@ call plug#begin()
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'morhetz/gruvbox'
+    Plug 'rust-lang/rust.vim'
 call plug#end()
 
+""" COLORSCHEMES
+if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
+    colorscheme gruvbox
+    set background=dark
+endif
 
 """ REMAPS
 let mapleader = ","
@@ -168,7 +170,7 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_lint_on_enter = 1
 let g:ale_completion_enabled = 1
-let g:ale_completion_autoimport = 0
+let g:ale_completion_autoimport = 1
 
 set omnifunc=ale#completion#OmniFunc
 
