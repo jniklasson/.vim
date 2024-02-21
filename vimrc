@@ -36,6 +36,59 @@ set autoread
 set backspace=indent,eol,start
 set belloff=all
 
+let g:ale_linters = {
+            \   'python': ['flake8', 'pylsp'],
+            \   'cpp': ['g++','clangd'],
+            \   'c': ['clangd'],
+            \   'rust':['analyzer','cargo'],
+            \}
+
+let g:ale_fixers = {
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \   'python': ['black'],
+            \   'rust': ['rustfmt']
+            \}
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_enter = 1
+let g:ale_completion_enabled = 1
+let g:ale_completion_autoimport = 1
+let g:ale_rust_cargo_use_clippy = 1
+
+set omnifunc=ale#completion#OmniFunc
+
+" air-line
+let g:airline#extensions#ale#enabled=1
+let g:airline#extensions#tabline#enabled=1
+let g:airline_power_fonts=1
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" airline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+
 """ PLUGINS
 " Check if VimPlug is installed
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -43,8 +96,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
-let g:ale_completion_enabled = 1
 
 call plug#begin()
     Plug 'dense-analysis/ale'
@@ -57,11 +108,8 @@ call plug#begin()
     Plug 'rust-lang/rust.vim'
 call plug#end()
 
-""" COLORSCHEMES
-if filereadable(expand("$HOME/.vim/colors/gruvbox.vim"))
-    colorscheme gruvbox
-    set background=dark
-endif
+colorscheme gruvbox
+set background=dark
 
 """ REMAPS
 let mapleader = ","
@@ -108,10 +156,6 @@ nnoremap <C-down> <C-w>-
 nnoremap <C-left> <C-w><
 nnoremap <C-right> <C-w>>
 
-" Make
-nnoremap <leader>m :make<CR>
-nnoremap <leader>f :FZF<CR>
-
 " FZF & Ripgrep
 nnoremap <leader>f :FZF<CR>
 nnoremap <leader>g :Rg<CR>
@@ -126,7 +170,6 @@ function! RipgrepVisualSelection()
     execute command
 endfunction
 
-
 " LSP
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>": "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>": "\<S-Tab>"
@@ -137,8 +180,7 @@ nnoremap gh :ALEHover<CR>
 nnoremap gn :ALENext<CR>
 nnoremap gp :ALEPrevious<CR>
 nnoremap gr :ALEFindReferences<CR>
-inoremap <C-Space> <C-\><C-O>:ALEComplete<CR>
-imap <C-Space> <Plug>(ale_complete)
+inoremap <C-@> <C-\><C-O>:ALEComplete<CR>
 
 nnoremap gd :<C-u>call ALEJump("ALEGoToDefinition")<CR>
 nnoremap gr :<C-u>call ALEJump("ALEFindReferences")<CR>
@@ -153,26 +195,6 @@ function! ALEJump(command)
          execute a:command 
     endif
 endfunction
-  
-let g:ale_linters = {
-            \   'python': ['flake8', 'pylsp'],
-            \   'cpp': ['g++','clangd'],
-            \   'c': ['clangd'],
-            \   'rust':['analyzer'],
-            \}
-
-let g:ale_fixers = {
-            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-            \   'python': ['black'],
-            \   'rust': ['rustfmt']
-            \}
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 0
-let g:ale_lint_on_enter = 1
-let g:ale_completion_enabled = 1
-let g:ale_completion_autoimport = 1
-
-set omnifunc=ale#completion#OmniFunc
 
 " NERD TREE
 nnoremap <F2> :NERDTreeToggle<CR>
@@ -188,34 +210,3 @@ augroup Binary
     au BufWritePost *.elf,*.out,*.bin,*.hex if &bin | %!xxd
     au BufWritePost *.elf,*.out,*.bin,*.hex set nomod | endif
 
-" air-line
-let g:airline#extensions#ale#enabled=1
-let g:airline#extensions#tabline#enabled=1
-let g:airline_power_fonts=1
-
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-
-" unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-
-" airline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
