@@ -1,4 +1,4 @@
-" GENERAL 
+" GENERAL
 set nocompatible
 set encoding=utf-8
 set exrc
@@ -19,7 +19,8 @@ set noswapfile
 set scrolloff=25
 set nowrap
 set incsearch
-set ignorecase
+set smartcase
+set showmatch
 set showcmd
 set showmode
 set history=1000
@@ -35,9 +36,11 @@ set ttyfast
 set autoread
 set backspace=indent,eol,start
 set belloff=all
+set t_Co=256
+set term=xterm-256color
 
 let g:ale_linters = {
-            \   'python': ['flake8', 'pylsp'],
+            \   'python':['flake8','jedils'],
             \   'cpp': ['g++','clangd'],
             \   'c': ['clangd'],
             \   'rust':['analyzer','cargo'],
@@ -45,15 +48,28 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-            \   'python': ['black'],
+            \   'python': ['black', 'isort'],
             \   'rust': ['rustfmt']
             \}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_lint_on_enter = 1
+let g:ale_fix_on_save = 0
 let g:ale_completion_enabled = 1
 let g:ale_completion_autoimport = 1
 let g:ale_rust_cargo_use_clippy = 1
+
+let g:ale_python_isort_options = '--profile black'
+let g:ale_python_black_options = '--line-length 120'
+let g:ale_python_flake8_options = '--ignore=E501,E211'
+
+" Fix Colors for ALE virtual text
+function! SetAleTextColors() abort
+    highlight ALEVirtualTextError ctermfg=red 
+    highlight ALEVirtualTextWarning ctermfg=yellow
+    highlight link ALEVirtualTextInfo Comment
+endfunction
+autocmd ColorScheme * call SetAleTextColors()
 
 set omnifunc=ale#completion#OmniFunc
 
@@ -89,27 +105,6 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
-""" PLUGINS
-" Check if VimPlug is installed
-if empty(glob('~/.vim/autoload/plug.vim'))
-    " Download VimPlug
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-call plug#begin()
-    Plug 'dense-analysis/ale'
-    Plug 'vim-airline/vim-airline'
-    Plug 'tpope/vim-fugitive'
-    Plug 'preservim/nerdtree'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
-    Plug 'morhetz/gruvbox'
-    Plug 'rust-lang/rust.vim'
-call plug#end()
-
-colorscheme gruvbox
-set background=dark
 
 """ REMAPS
 let mapleader = ","
@@ -126,8 +121,6 @@ nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-nnoremap gb :ls<CR>:buffer 
-nnoremap gl :buffer #<CR>
 
 " NVIM
 nnoremap <C-L> <Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>
@@ -139,7 +132,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Buffers
-nnoremap gb :ls<CR>:buffer 
+nnoremap gb :ls<CR>:buffer
 nnoremap gl :b#<CR>
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-b> :bprevious<CR>
@@ -192,13 +185,38 @@ function! ALEJump(command)
     if winnr('$') == 1
          execute a:command . ' -vsplit'
     else
-         execute a:command 
+         execute a:command
     endif
 endfunction
 
 " NERD TREE
 nnoremap <F2> :NERDTreeToggle<CR>
 nnoremap <F3> :NERDTreeFind<CR>
+
+
+""" PLUGINS
+" Check if VimPlug is installed
+if empty(glob('~/.vim/autoload/plug.vim'))
+    " Download VimPlug
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+    Plug 'dense-analysis/ale'
+    Plug 'vim-airline/vim-airline'
+    Plug 'tpope/vim-fugitive'
+    Plug 'preservim/nerdtree'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+    Plug 'morhetz/gruvbox'
+    Plug 'rust-lang/rust.vim'
+call plug#end()
+
+
+colorscheme gruvbox
+set background=dark
+
 
 augroup Binary
     au!
@@ -209,4 +227,3 @@ augroup Binary
     au BufWritePre *.elf,*.out,*.bin,*.hex endif
     au BufWritePost *.elf,*.out,*.bin,*.hex if &bin | %!xxd
     au BufWritePost *.elf,*.out,*.bin,*.hex set nomod | endif
-
