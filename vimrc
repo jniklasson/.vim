@@ -1,4 +1,9 @@
-" GENERAL
+" GENERAL ---------------------------------------------------------------------- {{{
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+
 set nocompatible
 set encoding=utf-8
 set exrc
@@ -38,6 +43,12 @@ set backspace=indent,eol,start
 set belloff=all
 set t_Co=256
 set term=xterm-256color
+set exrc
+set secure
+
+" }}}
+
+" PLUGIN SETTINGS ---------------------------------------------------------------------- {{{
 
 let g:ale_linters = {
             \   'python':['flake8','jedils'],
@@ -60,15 +71,9 @@ let g:ale_completion_autoimport = 1
 let g:ale_rust_cargo_use_clippy = 1
 
 let g:ale_python_isort_options = '--profile black'
-let g:ale_python_black_options = '--line-length 120'
-let g:ale_python_flake8_options = '--ignore=E501,E211'
+let g:ale_python_black_options = '--line-length 100'
+let g:ale_python_flake8_options = '--ignore=E501,E211,W504,W503'
 
-" Fix Colors for ALE virtual text
-function! SetAleTextColors() abort
-    highlight ALEVirtualTextError ctermfg=red 
-    highlight ALEVirtualTextWarning ctermfg=yellow
-    highlight link ALEVirtualTextInfo Comment
-endfunction
 autocmd ColorScheme * call SetAleTextColors()
 
 set omnifunc=ale#completion#OmniFunc
@@ -105,8 +110,9 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
+" }}}
 
-""" REMAPS
+" REMAPS ---------------------------------------------------------------------- {{{
 let mapleader = ","
 
 nnoremap o o<esc>
@@ -121,6 +127,7 @@ nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
+nnoremap - @@
 
 " NVIM
 nnoremap <C-L> <Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>
@@ -128,11 +135,8 @@ xnoremap * y/\V<C-R>"<CR>
 nnoremap & :&&<CR>
 xnoremap # y?\V<C-R>"<CR>
 
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-
 " Buffers
-nnoremap gb :ls<CR>:buffer
+nnoremap gb :ls<CR>:buffer  
 nnoremap gl :b#<CR>
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-b> :bprevious<CR>
@@ -154,15 +158,6 @@ nnoremap <leader>f :FZF<CR>
 nnoremap <leader>g :Rg<CR>
 vnoremap <leader>g :<C-u>call RipgrepVisualSelection()<CR>
 
-function! RipgrepVisualSelection()
-    let old_reg = @"
-    normal! gvy
-    let selection = @"
-    let @" = old_reg
-    let command = 'Rg ' . selection
-    execute command
-endfunction
-
 " LSP
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>": "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>": "\<S-Tab>"
@@ -179,7 +174,17 @@ nnoremap gd :<C-u>call ALEJump("ALEGoToDefinition")<CR>
 nnoremap gr :<C-u>call ALEJump("ALEFindReferences")<CR>
 nnoremap gt :<C-u>call ALEJump("ALEGoToTypeDefinition")<CR>
 
-""" If no splits are open, open in a split, else use current window.
+" NERD TREE
+nnoremap <F2> :NERDTreeToggle<CR>
+nnoremap <F3> :NERDTreeFind<CR>
+
+" Quickfix window toggle
+nnoremap <F4> :<C-u>call ToggleQuickFix()<CR>
+" }}}
+
+" SCRIPTS ---------------------------------------------------------------------- {{{
+"
+" If no splits are open, open in a split, else use current window.
 function! ALEJump(command)
     set splitright
     if winnr('$') == 1
@@ -189,12 +194,33 @@ function! ALEJump(command)
     endif
 endfunction
 
-" NERD TREE
-nnoremap <F2> :NERDTreeToggle<CR>
-nnoremap <F3> :NERDTreeFind<CR>
+function! RipgrepVisualSelection()
+    let old_reg = @"
+    normal! gvy
+    let selection = @"
+    let @" = old_reg
+    let command = 'Rg ' . selection
+    execute command
+endfunction
 
+" Fix Colors for ALE virtual text
+function! SetAleTextColors() abort
+    highlight ALEVirtualTextError ctermfg=red 
+    highlight ALEVirtualTextWarning ctermfg=yellow
+    highlight link ALEVirtualTextInfo Comment
+endfunction
 
-""" PLUGINS
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+       botright 20 copen
+    else
+        close
+    endif
+endfunction
+
+" }}}
+
+" PLUGINS ---------------------------------------------------------------------- {{{
 " Check if VimPlug is installed
 if empty(glob('~/.vim/autoload/plug.vim'))
     " Download VimPlug
@@ -217,6 +243,9 @@ call plug#end()
 colorscheme gruvbox
 set background=dark
 
+" }}}
+
+" BINARY EDITING ---------------------------------------------------------------------- {{{
 
 augroup Binary
     au!
@@ -227,3 +256,5 @@ augroup Binary
     au BufWritePre *.elf,*.out,*.bin,*.hex endif
     au BufWritePost *.elf,*.out,*.bin,*.hex if &bin | %!xxd
     au BufWritePost *.elf,*.out,*.bin,*.hex set nomod | endif
+
+" }}}
